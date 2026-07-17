@@ -170,6 +170,7 @@
   .swatch-input::-moz-color-swatch{border:none;border-radius:50%;}
   .legend{align-items:center;}
   .legend .btn{padding:4px 10px;font-size:11px;}
+  .print-swatch{display:none;}
 
   ul.tree, ul.tree ul{
     list-style:none;
@@ -412,6 +413,7 @@
     header{margin-bottom:16px;padding-bottom:12px;}
     .legend{margin-bottom:16px;}
     .legend .btn, .legend input[type=color]{display:none;}
+    .print-swatch{display:inline-block;width:10px;height:10px;border-radius:50%;}
     .toggle, .edit-icon{display:none !important;}
     .node{padding:4px 8px;}
     .node:hover{background:none;}
@@ -451,12 +453,12 @@
   </div>
 
   <div class="legend" id="legend">
-    <span><input type="color" class="swatch-input" id="c0" value="#1B2E22"><label for="c0">Gen 1</label></span>
-    <span><input type="color" class="swatch-input" id="c1" value="#2F4B3E"><label for="c1">Gen 2</label></span>
-    <span><input type="color" class="swatch-input" id="c2" value="#5C7C6C"><label for="c2">Gen 3</label></span>
-    <span><input type="color" class="swatch-input" id="c3" value="#A87C3F"><label for="c3">Gen 4</label></span>
-    <span><input type="color" class="swatch-input" id="c4" value="#D9B77C"><label for="c4">Gen 5</label></span>
-    <span><input type="color" class="swatch-input" id="c5" value="#C97B63"><label for="c5">Gen 6</label></span>
+    <span><input type="color" class="swatch-input" id="c0" value="#1B2E22"><span class="print-swatch" id="ps0"></span><label for="c0">Gen 1</label></span>
+    <span><input type="color" class="swatch-input" id="c1" value="#2F4B3E"><span class="print-swatch" id="ps1"></span><label for="c1">Gen 2</label></span>
+    <span><input type="color" class="swatch-input" id="c2" value="#5C7C6C"><span class="print-swatch" id="ps2"></span><label for="c2">Gen 3</label></span>
+    <span><input type="color" class="swatch-input" id="c3" value="#A87C3F"><span class="print-swatch" id="ps3"></span><label for="c3">Gen 4</label></span>
+    <span><input type="color" class="swatch-input" id="c4" value="#D9B77C"><span class="print-swatch" id="ps4"></span><label for="c4">Gen 5</label></span>
+    <span><input type="color" class="swatch-input" id="c5" value="#C97B63"><span class="print-swatch" id="ps5"></span><label for="c5">Gen 6</label></span>
     <span style="color:var(--brass)">†  deceased</span>
     <button class="btn" id="resetColors">Reset colors</button>
   </div>
@@ -669,19 +671,26 @@ editToggle.addEventListener('click', () => {
 
 /* ---------- Colors ---------- */
 const colorInputs = [0,1,2,3,4,5].map(i => document.getElementById('c'+i));
+const printSwatches = [0,1,2,3,4,5].map(i => document.getElementById('ps'+i));
+function syncPrintSwatches(){
+  printSwatches.forEach((sw, i) => sw.style.background = genColors[i]);
+}
 colorInputs.forEach((inp, i) => {
   inp.value = genColors[i];
   inp.addEventListener('input', () => {
     genColors[i] = inp.value;
     genColors[6] = genColors[5];
+    syncPrintSwatches();
     render();
   });
 });
 document.getElementById('resetColors').addEventListener('click', () => {
   genColors = defaultColors.slice();
   colorInputs.forEach((inp, i) => inp.value = genColors[i]);
+  syncPrintSwatches();
   render();
 });
+syncPrintSwatches();
 
 /* ---------- Save as PDF (browser print) ---------- */
 let preprintCollapsed = null;
